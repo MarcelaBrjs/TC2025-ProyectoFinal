@@ -35,6 +35,8 @@ int main(int argc , char *argv[])
     c = sizeof(struct sockaddr_in);
     while( (new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) ) {
         puts("Connection accepted.");
+        
+        // Receive data from client.
         recv(new_socket, client_data, 2000, 0);
         printf("%s", client_data);
 
