@@ -40,10 +40,8 @@ int main(int argc, char *argv[])
     printf("Ingrese la opción deseada [0-3]: ");
     scanf("%d", &opcion);
 
-    do
-    {
-        switch (opcion)
-        {
+    do {
+        switch (opcion) {
             case 1:
                 send(socket_desc, "1;368", strlen("1;368"), 0);
 
