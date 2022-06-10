@@ -227,7 +227,7 @@ int main(int argc, char const *argv[])
 					}
 				}
 
-				char resPercentage[200];
+				char resPercentage[200] = "";
 				snprintf(resPercentage, sizeof resPercentage, "El archivo cubre el %.2f%% del genoma de referencia.\n%d secuencias mapeadas.\n%d secuencias no mapeadas.\n", res * 100, contSecMap, sequencesCont - contSecMap);
 				printf("Server: %s Length: %lu\n", resPercentage, strlen(resPercentage));
 				send(new_socket, resPercentage, strlen(resPercentage), 0);

@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
 	char buffer[2048] = {};
 	char fileNameReference[] = {"reference.txt"};
 	char fileNameSequence[] = {"sequencesTest.seq"};
-	char line[500], resPercentage[200] = "";
+	char line[500];
 	char ch;
 	long size;
 	int size2;
@@ -200,8 +200,12 @@ int main(int argc, char const *argv[])
 		case 3:
 			// Recibir resultados.
 			send(sock, "3;", strlen("3;"), 0);
+
+			char resPercentage[201] = "";
+			recv(sock, resPercentage, 200, 0);
+			resPercentage[200] = '\0';
 			// memset(data, 0, sizeof(data));
-			recv(sock, resPercentage, strlen(resPercentage), 0);
+			
 			printf("sock: %d length: %lu resPercentage: %s\n", sock, strlen(resPercentage), resPercentage);
 			// printf("dos: %c, %c, %c, %c\n", resPercentage[15], resPercentage[16], resPercentage[17], resPercentage[18]);
 			//  printf("%s", resPercentage);
