@@ -7,6 +7,7 @@
 #define PORT 8080
 
 char sequences[1000][20000];
+char *reference;
 
 int main(int argc, char const* argv[]) {
 	int server_fd, new_socket, valread;
@@ -14,7 +15,6 @@ int main(int argc, char const* argv[]) {
 	int opt = 1;
 	int addrlen = sizeof(address);
 	char buffer[2048];
-	char *reference;
 	
 	// SOCKET CREATION
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
