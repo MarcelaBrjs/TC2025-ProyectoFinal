@@ -42,81 +42,6 @@ void *threadFunc(void *arg)
 	pthread_exit(NULL);
 }
 
-void calculate()
-{
-	int sizeRef = strlen(reference);
-
-	int *arrSeq = malloc(sequencesCont * sizeof(int));
-	int *arrRef = malloc(sizeRef * sizeof(int));
-
-	pthread_t threads[sequencesCont];
-	struct _ThreadArgs thread_args[sequencesCont];
-	int rc;
-
-	/* spawn the threads */
-	for (int i = 0; i < sequencesCont; i++)
-	{
-		thread_args[i].tid = i;
-		thread_args[i].sequence = sequences[i];
-		rc = pthread_create(&threads[i], NULL, threadFunc, (void *)&thread_args[i]);
-	}
-
-	/* wait for threads to finish */
-	for (int i = 0; i < sequencesCont; ++i)
-	{
-		rc = pthread_join(threads[i], NULL);
-	}
-
-	for (int i = 0; i < sequencesCont; ++i)
-	{
-		arrSeq[i] = thread_args[i].pos;
-	}
-
-	int contSecMap = 0;
-	for (int i = 0; i < sequencesCont; i++)
-	{
-		if (arrSeq[i] != -1)
-		{
-			contSecMap += 1;
-			int from = arrSeq[i];
-			int to = arrSeq[i] + strlen(sequences[i]);
-			for (int j = from; j < to; j++)
-			{
-				arrRef[j] = 1;
-			}
-		}
-	}
-	int contFound = 0;
-	for (int i = 0; i < sizeRef; i++)
-	{
-		if (arrRef[i] == 1)
-		{
-			contFound += 1;
-		}
-	}
-	double res = contFound;
-	res /= sizeRef;
-
-	// MANDAR ENVES DE IMPRIMIR
-	for (int i = 0; i < sequencesCont; i++)
-	{
-		if (arrSeq[i] != -1)
-		{
-			printf("%s", sequences[i]);
-			printf(" a partir del caracter: ");
-			printf("%d\n", arrSeq[i]);
-		}
-		else
-		{
-			printf("%s", sequences[i]);
-			printf(" no se encontro\n");
-		}
-	}
-	printf("El archivo cubre el %.2f%% del genoma de referencia\n", res * 100);
-	printf("%d secuencias mapeadas\n", contSecMap);
-	printf("%d secuencias no mapeadas", sequencesCont - contSecMap);
-}
-
 int main(int argc, char const *argv[])
 {
 	int server_fd, new_socket, valread;
@@ -231,15 +156,86 @@ int main(int argc, char const *argv[])
 			else if (option == 3)
 			{
 				// Retornar los resultados.
-
 				// PRUEBAS DE VARIABLES
 				// printf("Reference => %s\n", reference);
-				calculate();
+
+				int sizeRef = strlen(reference);
+				int *arrSeq = malloc(sequencesCont * sizeof(int));
+				int *arrRef = malloc(sizeRef * sizeof(int));
+
+				pthread_t threads[sequencesCont];
+				struct _ThreadArgs thread_args[sequencesCont];
+				int rc;
+
+				/* spawn the threads */
+				for (int i = 0; i < sequencesCont; i++)
+				{
+					thread_args[i].tid = i;
+					thread_args[i].sequence = sequences[i];
+					rc = pthread_create(&threads[i], NULL, threadFunc, (void *)&thread_args[i]);
+				}
+
+				/* wait for threads to finish */
+				for (int i = 0; i < sequencesCont; ++i)
+				{
+					rc = pthread_join(threads[i], NULL);
+				}
+
+				for (int i = 0; i < sequencesCont; ++i)
+				{
+					arrSeq[i] = thread_args[i].pos;
+				}
+
+				int contSecMap = 0;
+				for (int i = 0; i < sequencesCont; i++)
+				{
+					if (arrSeq[i] != -1)
+					{
+						contSecMap += 1;
+						int from = arrSeq[i];
+						int to = arrSeq[i] + strlen(sequences[i]);
+						for (int j = from; j < to; j++)
+						{
+							arrRef[j] = 1;
+						}
+					}
+				}
+				int contFound = 0;
+				for (int i = 0; i < sizeRef; i++)
+				{
+					if (arrRef[i] == 1)
+					{
+						contFound += 1;
+					}
+				}
+				double res = contFound;
+				res /= sizeRef;
+
+				// MANDAR ENVES DE IMPRIMIR
+				for (int i = 0; i < sequencesCont; i++)
+				{
+					if (arrSeq[i] != -1)
+					{
+						// printf("%s", sequences[i]);
+						// printf(" a partir del caracter: ");
+						// printf("%d\n", arrSeq[i]);
+					}
+					else
+					{
+						// printf("%s", sequences[i]);
+						// printf(" no se encontro\n");
+					}
+				}
+
+				char resPercentage[200];
+				snprintf(resPercentage, sizeof resPercentage, "El archivo cubre el %.2f%% del genoma de referencia.\n%d secuencias mapeadas.\n%d secuencias no mapeadas.\n", res * 100, contSecMap, sequencesCont - contSecMap);
+				printf("Server: %s Length: %lu\n", resPercentage, strlen(resPercentage));
+				send(new_socket, resPercentage, strlen(resPercentage), 0);
 			}
 			else if (option == 0)
 			{
 				// Salir.
-				printf("Sesión completada.\n");
+				printf("Sesión terminada.\n");
 			}
 		}
 	}
