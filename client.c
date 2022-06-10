@@ -45,7 +45,7 @@ int main(int argc, char const* argv[]) {
 	int sock = 0, opcion, valread, client_fd;
 	struct sockaddr_in serv_addr;
 	char buffer[2048] = {};
-	char fileNameReference[] = { "referenceTest.txt" };
+	char fileNameReference[] = { "reference.txt" };
 	char fileNameSequence[] = { "sequencesTest.seq" };
 	char line[500];
 	char ch;

@@ -67,8 +67,6 @@ int main(int argc, char const* argv[]) {
 					memset(data, 0, sizeof(data));
 				}
 
-				printf("%s\n", reference);
-
 				// Confirmar al cliente la correcta recepción de los datos.
 				send(new_socket, "Reference data stored successfully.", strlen("Reference data stored successfully."), 0);
 
