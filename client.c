@@ -8,7 +8,7 @@
 #define PORT 8080
 
 long int findSize(char file_name[]) {
-	FILE* fp = fopen(file_name, "r");
+	FILE *fp = fopen(file_name, "r");
 
 	if (fp == NULL) {
 		printf("File Not Found!\n");
@@ -23,6 +23,24 @@ long int findSize(char file_name[]) {
 	return size;
 }
 
+int countLines(char *filename) {                                   
+    FILE *fp = fopen(filename,"r");
+    int ch=0;
+    int lines=0;
+
+    while(!feof(fp)) {
+        ch = fgetc(fp);
+        if(ch == '\n')
+        {
+            lines++;
+        }
+    }
+    lines++;
+
+    fclose(fp);
+    return lines;
+}
+
 int main(int argc, char const* argv[]) {
 	int sock = 0, opcion, valread, client_fd;
 	struct sockaddr_in serv_addr;
@@ -32,6 +50,7 @@ int main(int argc, char const* argv[]) {
 	char line[500];
 	char ch;
 	long size;
+	int size2;
 	
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		printf("\n Socket creation error \n");
@@ -69,7 +88,10 @@ int main(int argc, char const* argv[]) {
 				// Tamaño total del archivo.
 				size = findSize(fileNameReference);
 
-				send(sock, "1;7736;", strlen("1;7736;"), 0);
+				char instruction[20];
+				snprintf(instruction, sizeof instruction, "1;%ld;", size);
+
+				send(sock, instruction, strlen(instruction), 0);
 
 				// Leer archivo de referencia.
 				FILE *ptrFileReference;
@@ -89,7 +111,7 @@ int main(int argc, char const* argv[]) {
 							return 1;
 						}
 						count = 0;
-
+						memset(segment, 0, sizeof(segment));
 					}
 					strcpy(&segment[count], &ch);
 					count++;
@@ -108,33 +130,48 @@ int main(int argc, char const* argv[]) {
 				break;
             case 2:
 				// Tamaño total del archivo.
-				size = findSize(fileNameSequence);
-				send(sock, "2;29205;", strlen("2;29205;"), 0);
+				size2 = countLines(fileNameSequence);
+
+				char instruction2[20];
+				snprintf(instruction2, sizeof instruction2, "2;%d;", size2);
+
+				send(sock, instruction2, strlen(instruction2), 0);
+				// send(sock, "2;", strlen("2;"), 0);
 				
 				// Leer archivo de sequences.
 				FILE *ptrFileSequences;
-				ptrFileSequences = fopen("sequences.seq","r");
+				ptrFileSequences = fopen(fileNameSequence,"r");
 
 				// Si el archivo no está disponible:
                 if (ptrFileSequences == NULL) {
                     printf("sequences.seq error.\n");
                 };
 
-				// Lectura por línea del archivo.
-                // while (fgets(line, sizeof(line), ptrFileSequences)) {
-                //     if(send(sock, line, strlen(line), 0) < 0) {
-                //         puts("Send failed.");
-                //         return 1;
-                //     }
-                //     printf("Data sent - Sequences.\n");
-				// 	memset(buffer, 0, sizeof(buffer));
-                // }
+				// Lectura del archivo.
+				int count2 = 0;
+				char segment2[2048] = "";
+				while ((ch = fgetc(ptrFileSequences)) != EOF) {
+					if ( count2 == 2048 ) {
+						if(send(sock, segment2, strlen(segment2), 0) < 0) {
+							puts("Send failed.");
+							return 1;
+						}
+						count2 = 0;
+						memset(segment2, 0, sizeof(segment2));
+					}
+					strcpy(&segment2[count2], &ch);
+					count2++;
+				}
+				if(send(sock, segment2, strlen(segment2), 0) < 0) {
+					puts("Send failed.");
+					return 1;
+				}
 
 				fclose(ptrFileSequences);
 
 				// Recibir confirmación del servidor.
-				// read(sock, buffer, 2048);
-				// printf("\n%s\n", buffer);
+				read(sock, buffer, 2048);
+				printf("\n%s\n", buffer);
 
 				break;
 			case 3:

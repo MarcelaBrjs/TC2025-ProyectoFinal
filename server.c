@@ -6,14 +6,16 @@
 #include <unistd.h>
 #define PORT 8080
 
+char sequences[1000][20000];
+
 int main(int argc, char const* argv[]) {
 	int server_fd, new_socket, valread;
 	struct sockaddr_in address;
 	int opt = 1;
 	int addrlen = sizeof(address);
 	char buffer[2048];
-	char *reference, *sequences;
-
+	char *reference;
+	
 	// SOCKET CREATION
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
 		perror("Socket creation failed"); 
@@ -44,7 +46,6 @@ int main(int argc, char const* argv[]) {
 		printf("Connection accepted.\n");
 
 		while ((valread = read(new_socket, buffer, 2048))) {
-			printf("Data in buffer => %s\n", buffer);
 			char *sp = ";";
             int option = atoi(strtok(buffer, sp));
 			printf("Option => %d\n", option);
@@ -73,26 +74,47 @@ int main(int argc, char const* argv[]) {
 
             } else if (option == 2) {
 				// Salvar length del archivo.
-                long int fileLengthSequences = atoi(strtok(NULL, sp));
+                int fileLengthSequences = atoi(strtok(NULL, sp));
                 memset(buffer, 0, sizeof(buffer));
-				printf("fileLengthSequences => %ld\n", fileLengthSequences);
+				printf("fileLengthSequences => %d\n", fileLengthSequences);
 
-				// Asignar memoria a la variable 'sequences', donde se guardarán los datos de sequences.seq
-				sequences = malloc(fileLengthSequences * sizeof(char));
+				int sequencesCont = 0;
+                char data[2049] = "";
+                int p = 0;
 
-				// PENDIENTE. Guardar datos en variables.
+				// !! CAMBIAR 3 POR 1000 AL USAR EL ARCHIVO FINAL.
+                while (sequencesCont < fileLengthSequences) {
+                    recv(new_socket, data, 2048, 0);
+					data[2048] = '\0';
 
+					for (int i = 0; i < strlen(data); i++) {
+						if (data[i] == '\n') {
+							sequences[sequencesCont][p] = '\0';
+							sequencesCont = sequencesCont + 1;
+							p = 0;
+						} else {
+							sequences[sequencesCont][p] = data[i];
+							p = p + 1;
+						}
+					}
 
-				// printf("Sequence => %s\n", sequences);
-
+					if (strlen(data) < 2048) {
+                        sequencesCont = sequencesCont + 1;
+                    }
+                    
+                    memset(data, 0, sizeof(data));
+                }
 				// Confirmar al cliente la correcta recepción de los datos.
-				// send(new_socket, "Sequences data stored successfully.", strlen("Sequences data stored successfully."), 0);
+				send(new_socket, "Sequences data stored successfully.", strlen("Sequences data stored successfully."), 0);
 
 			} else if (option == 3) {
                 // Retornar los resultados.
 
 				// PRUEBAS DE VARIABLES
-				printf("Reference => %s\n", reference);
+				// printf("Reference => %s\n", reference);
+				printf("S1 => %s\n", sequences[0]);
+				printf("S2 => %s\n", sequences[1]);
+				printf("S3 => %s\n", sequences[2]);
 
 			} else if (option == 0) {
                 // Salir.
