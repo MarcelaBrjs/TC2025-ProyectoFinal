@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <ctype.h>
 #define _OPEN_SYS_ITOA_EXT
 #define PORT 8080
 
@@ -200,33 +201,36 @@ int main(int argc, char const *argv[])
 			// Recibir resultados.
 			send(sock, "3;", strlen("3;"), 0);
 
-			int segCont = 0;
-			char data[2049] = "";
+			char segment3[2049] = "";
+			int secCont = 0;
 
-			// while (segCont < size2)
-			// {
-			// 	recv(sock, data, 2048, 0);
-			// 	data[2048] = '\0';
+			// Mandar resultados por partes
+			while (secCont < size2)
+			{
+				// printf("secCONT: %d\n", secCont);
+				recv(sock, segment3, 2048, 0);
+				segment3[2048] = '\0';
 
-			// 	for (int i = 0; i < strlen(data); i++)
-			// 	{
-			// 		if (data[i] == '\n')
-			// 		{
-			// 			segCont
-			// 		}
-			// 		else
-			// 		{
-			// 			printf('%c', data[i]);
-			// 		}
-			// 	}
+				for (int i = 0; i < strlen(segment3); i++)
+				{
+					if (segment3[i] == '\n')
+					{
+						secCont++;
+						printf("\n");
+					}
+					else
+					{
+						printf("%c", segment3[i]);
+					}
+				}
 
-			// 	if (strlen(data) < 2048)
-			// 	{
-			// 		sequencesCont = sequencesCont + 1;
-			// 	}
+				if (strlen(segment3) < 2048)
+				{
+					secCont++;
+				}
 
-			// 	memset(data, 0, sizeof(data));
-			// }
+				memset(segment3, 0, sizeof(segment3));
+			}
 
 			char resPercentage[201] = "";
 			recv(sock, resPercentage, 200, 0);
