@@ -190,7 +190,7 @@ int main(int argc, char const *argv[])
 
 					for (int i = 0; i < 10; ++i)
 					{
-						printf("%d,  %d \n", j + 1, i + mux);
+						// printf("%d,  %d \n", j + 1, i + mux);
 						arrSeq[i + mux] = thread_args[i].pos;
 					}
 				}

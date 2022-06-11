@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
 	struct sockaddr_in serv_addr;
 	char buffer[2048] = {};
 	char fileNameReference[] = {"reference.txt"};
-	char fileNameSequence[] = {"sequencesTest.seq"};
+	char fileNameSequence[] = {"sequences.seq"};
 	char line[500];
 	char ch;
 	long size;
