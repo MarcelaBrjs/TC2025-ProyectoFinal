@@ -207,7 +207,7 @@ int main(int argc, char const *argv[])
 			// Mandar resultados por partes
 			while (secCont < size2)
 			{
-				// printf("secCONT: %d\n", secCont);
+				// printf("\nsecCONT: %d\n", secCont);
 				recv(sock, segment3, 2048, 0);
 				segment3[2048] = '\0';
 
@@ -224,10 +224,10 @@ int main(int argc, char const *argv[])
 					}
 				}
 
-				if (strlen(segment3) < 2048)
-				{
-					secCont++;
-				}
+				// if (strlen(segment3) < 2048)
+				// {
+				// 	secCont++;
+				// }
 
 				memset(segment3, 0, sizeof(segment3));
 			}
