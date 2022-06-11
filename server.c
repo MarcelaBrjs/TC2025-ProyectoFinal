@@ -222,13 +222,13 @@ int main(int argc, char const *argv[])
 					{
 						snprintf(resSequence, sizeof resSequence, "%s a partir del caracter: %d\n", sequences[i], arrSeq[i]);
 						strcpy(resSequences[i], resSequence);
-						printf("%s", resSequences[i]);
+						// printf("%s", resSequences[i]);
 					}
 					else
 					{
 						snprintf(resSequence, sizeof resSequence, "%s no se encontró.\n", sequences[i]);
 						strcpy(resSequences[i], resSequence);
-						printf("%s", resSequences[i]);
+						// printf("%s", resSequences[i]);
 					}
 				}
 
@@ -246,6 +246,7 @@ int main(int argc, char const *argv[])
 						if (count2 == 2048)
 						{
 							count2 = 0;
+							// printf("%s", segment2);
 							memset(segment2, 0, sizeof(segment2));
 						}
 
@@ -255,11 +256,13 @@ int main(int argc, char const *argv[])
 						if (count2 == 2047)
 						{
 							send(new_socket, segment2, strlen(segment2), 0);
+							printf("%s", segment2);
 							i--;
 						}
 					}
 
 					send(new_socket, segment2, strlen(segment2), 0);
+					printf("%s", segment2);
 					segCont++;
 					count2 = 0;
 				}
