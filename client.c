@@ -79,7 +79,7 @@ int main(int argc, char const *argv[])
 		return -1;
 	}
 
-	printf("Connected.\n");
+	printf("\nConnected.\n");
 
 	printf("\nAnálisis de ADN\n");
 	printf("Opciones:\n");
@@ -154,7 +154,6 @@ int main(int argc, char const *argv[])
 			snprintf(instruction2, sizeof instruction2, "2;%d;", size2);
 
 			send(sock, instruction2, strlen(instruction2), 0);
-			// send(sock, "2;", strlen("2;"), 0);
 
 			// Leer archivo de sequences.
 			FILE *ptrFileSequences;
@@ -201,14 +200,39 @@ int main(int argc, char const *argv[])
 			// Recibir resultados.
 			send(sock, "3;", strlen("3;"), 0);
 
+			int segCont = 0;
+			char data[2049] = "";
+
+			// while (segCont < size2)
+			// {
+			// 	recv(sock, data, 2048, 0);
+			// 	data[2048] = '\0';
+
+			// 	for (int i = 0; i < strlen(data); i++)
+			// 	{
+			// 		if (data[i] == '\n')
+			// 		{
+			// 			segCont
+			// 		}
+			// 		else
+			// 		{
+			// 			printf('%c', data[i]);
+			// 		}
+			// 	}
+
+			// 	if (strlen(data) < 2048)
+			// 	{
+			// 		sequencesCont = sequencesCont + 1;
+			// 	}
+
+			// 	memset(data, 0, sizeof(data));
+			// }
+
 			char resPercentage[201] = "";
 			recv(sock, resPercentage, 200, 0);
 			resPercentage[200] = '\0';
-			// memset(data, 0, sizeof(data));
-			
-			printf("sock: %d length: %lu resPercentage: %s\n", sock, strlen(resPercentage), resPercentage);
-			// printf("dos: %c, %c, %c, %c\n", resPercentage[15], resPercentage[16], resPercentage[17], resPercentage[18]);
-			//  printf("%s", resPercentage);
+			printf("\n%s", resPercentage);
+
 			break;
 		default:
 			printf("Opción inválida, intente de nuevo.\n");

@@ -14,6 +14,7 @@
 #define PORT 8080
 
 char sequences[1000][20000];
+char resSequences[1000][20000];
 int sequencesCont = 0;
 char *reference;
 
@@ -121,6 +122,7 @@ int main(int argc, char const *argv[])
 				sequencesCont = 0;
 				char data[2049] = "";
 				int p = 0;
+				int seg = 0;
 
 				// !! CAMBIAR 3 POR 1000 AL USAR EL ARCHIVO FINAL.
 				while (sequencesCont < fileLengthSequences)
@@ -211,25 +213,68 @@ int main(int argc, char const *argv[])
 				double res = contFound;
 				res /= sizeRef;
 
-				// MANDAR ENVES DE IMPRIMIR
+				// Almacenar resultados en arreglo sequencesSingle
 				for (int i = 0; i < sequencesCont; i++)
 				{
+					char resSequence[20000] = "";
+
 					if (arrSeq[i] != -1)
 					{
-						// printf("%s", sequences[i]);
-						// printf(" a partir del caracter: ");
-						// printf("%d\n", arrSeq[i]);
+						snprintf(resSequence, sizeof resSequence, "%s a partir del caracter: %d\n", sequences[i], arrSeq[i]);
+						strcpy(resSequences[i], resSequence);
+						printf("%s", resSequences[i]);
+						// send(new_socket, resSequence, strlen(resSequence), 0);
 					}
 					else
 					{
-						// printf("%s", sequences[i]);
-						// printf(" no se encontro\n");
+						snprintf(resSequence, sizeof resSequence, "%s no se encontró.\n", sequences[i]);
+						strcpy(resSequences[i], resSequence);
+						printf("%s", resSequences[i]);
+						// send(new_socket, resSequence, strlen(resSequence), 0);
 					}
 				}
 
+				int segCont = 0;
+				int count2 = 0;
+				char segment2[2048] = "";
+
+				// while (segCont < sequencesCont)
+				while (segCont < 1)
+				{
+					int seqSize = strlen(resSequences[segCont]);
+					printf("\nSEQSIZE: %d\n", seqSize);
+
+					for (int i = 0; i < seqSize; i++)
+					{
+						if (count2 == 2048)
+						{
+							// printf("\nESTOY ENTRANDO 2\n");
+							printf("\nsegment: %s\n", segment2);
+							// if (send(new_socket, segment2, strlen(segment2), 0) < 0)
+							// {
+							// 	puts("Send failed.");
+							// 	return 1;
+							// }
+							count2 = 0;
+							memset(segment2, 0, sizeof(segment2));
+						}
+						else
+						{
+							strcpy(&segment2[count2], &resSequences[segCont][i]);
+							// printf("%c", segment2[count2]);
+							count2++;
+						}
+
+						printf("count: %d i: %d\t", count2, i);
+					}
+
+					printf("\nsegmentFINAL: %s\n", segment2);
+					segCont++;
+				}
+
 				char resPercentage[200] = "";
-				snprintf(resPercentage, sizeof resPercentage, "El archivo cubre el %.2f%% del genoma de referencia.\n%d secuencias mapeadas.\n%d secuencias no mapeadas.\n", res * 100, contSecMap, sequencesCont - contSecMap);
-				printf("Server: %s Length: %lu\n", resPercentage, strlen(resPercentage));
+				snprintf(resPercentage, sizeof resPercentage, "El archivo cubre el %.2f%% del genoma de referencia.\n%d secuencias mapeadas.\n%d secuencias no mapeadas.\n", (res * 100), contSecMap, sequencesCont - contSecMap);
+				printf("%s", resPercentage);
 				send(new_socket, resPercentage, strlen(resPercentage), 0);
 			}
 			else if (option == 0)
