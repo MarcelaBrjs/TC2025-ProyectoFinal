@@ -164,62 +164,28 @@ int main(int argc, char const *argv[])
 				int sizeRef = strlen(reference);
 				int *arrSeq = malloc(sequencesCont * sizeof(int));
 				int *arrRef = malloc(sizeRef * sizeof(int));
-				int dividir = sequencesCont / 10;
-				int lef = sequencesCont % 10;
-				int mux;
-				for (int j = 0; j < dividir; j++)
+
+				pthread_t threads[sequencesCont];
+				struct _ThreadArgs thread_args[sequencesCont];
+				int rc;
+
+				/* spawn the threads */
+				for (int i = 0; i < sequencesCont; i++)
 				{
-					mux = 10 * j;
-					pthread_t threads[10];
-					struct _ThreadArgs thread_args[10];
-					int rc;
-
-					/* spawn the threads */
-					for (int i = 0; i < 10; i++)
-					{
-						thread_args[i].tid = i + mux;
-						thread_args[i].sequence = sequences[i + mux];
-						rc = pthread_create(&threads[i], NULL, threadFunc, (void *)&thread_args[i]);
-					}
-
-					/* wait for threads to finish */
-					for (int i = 0; i < 10; ++i)
-					{
-						rc = pthread_join(threads[i], NULL);
-					}
-
-					for (int i = 0; i < 10; ++i)
-					{
-						printf("%d,  %d \n", j + 1, i + mux);
-						arrSeq[i + mux] = thread_args[i].pos;
-					}
+					thread_args[i].tid = i;
+					thread_args[i].sequence = sequences[i];
+					rc = pthread_create(&threads[i], NULL, threadFunc, (void *)&thread_args[i]);
 				}
-				if (lef > 0)
+
+				/* wait for threads to finish */
+				for (int i = 0; i < sequencesCont; ++i)
 				{
-					mux = dividir * 10;
-					pthread_t threads[lef];
-					struct _ThreadArgs thread_args[lef];
-					int rc;
+					rc = pthread_join(threads[i], NULL);
+				}
 
-					/* spawn the threads */
-					for (int i = 0; i < lef; i++)
-					{
-						thread_args[i].tid = i + mux;
-						thread_args[i].sequence = sequences[i + mux];
-						rc = pthread_create(&threads[i], NULL, threadFunc, (void *)&thread_args[i]);
-					}
-
-					/* wait for threads to finish */
-					for (int i = 0; i < lef; ++i)
-					{
-						rc = pthread_join(threads[i], NULL);
-					}
-
-					for (int i = 0; i < lef; ++i)
-					{
-						printf("a %d \n", i + mux);
-						arrSeq[i + mux] = thread_args[i].pos;
-					}
+				for (int i = 0; i < sequencesCont; ++i)
+				{
+					arrSeq[i] = thread_args[i].pos;
 				}
 
 				int contSecMap = 0;
