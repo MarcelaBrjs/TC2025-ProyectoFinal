@@ -246,11 +246,11 @@ int main(int argc, char const *argv[])
 					{
 						if (count2 == 2048)
 						{
-							if (send(new_socket, segment2, strlen(segment2), 0) < 0)
-							{
-								puts("Send failed.");
-								return 1;
-							}
+							// if (send(new_socket, segment2, strlen(segment2), 0) < 0)
+							// {
+							// 	puts("Send failed.");
+							// 	return 1;
+							// }
 							count2 = 0;
 							memset(segment2, 0, sizeof(segment2));
 						}
@@ -260,13 +260,16 @@ int main(int argc, char const *argv[])
 
 						if (count2 == 2047)
 						{
-							send(new_socket, segment2, strlen(segment2);
+							// send(new_socket, segment2, strlen(segment2), 0);
+							printf("%s\n", segment2);
 							i--;
 						}
 					}
 
-					send(new_socket, segment2, strlen(segment2);
+					// send(new_socket, segment2, strlen(segment2), 0);
+					printf("%s\n\n", segment2);
 					segCont++;
+					count2 = 0;
 				}
 
 				char resPercentage[200] = "";
