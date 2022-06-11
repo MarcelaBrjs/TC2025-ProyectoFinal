@@ -124,7 +124,6 @@ int main(int argc, char const *argv[])
 				int p = 0;
 				int seg = 0;
 
-				// !! CAMBIAR 3 POR 1000 AL USAR EL ARCHIVO FINAL.
 				while (sequencesCont < fileLengthSequences)
 				{
 					recv(new_socket, data, 2048, 0);
