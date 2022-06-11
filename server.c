@@ -238,37 +238,34 @@ int main(int argc, char const *argv[])
 				int count2 = 0;
 				char segment2[2048] = "";
 
-				// while (segCont < sequencesCont)
-				while (segCont < 1)
+				while (segCont < sequencesCont)
 				{
 					int seqSize = strlen(resSequences[segCont]);
-					printf("\nSEQSIZE: %d\n", seqSize);
 
 					for (int i = 0; i < seqSize; i++)
 					{
 						if (count2 == 2048)
 						{
-							// printf("\nESTOY ENTRANDO 2\n");
-							printf("\nsegment: %s\n", segment2);
-							// if (send(new_socket, segment2, strlen(segment2), 0) < 0)
-							// {
-							// 	puts("Send failed.");
-							// 	return 1;
-							// }
+							if (send(new_socket, segment2, strlen(segment2), 0) < 0)
+							{
+								puts("Send failed.");
+								return 1;
+							}
 							count2 = 0;
 							memset(segment2, 0, sizeof(segment2));
 						}
-						else
-						{
-							strcpy(&segment2[count2], &resSequences[segCont][i]);
-							// printf("%c", segment2[count2]);
-							count2++;
-						}
 
-						printf("count: %d i: %d\t", count2, i);
+						segment2[count2] = resSequences[segCont][i];
+						count2++;
+
+						if (count2 == 2047)
+						{
+							send(new_socket, segment2, strlen(segment2);
+							i--;
+						}
 					}
 
-					printf("\nsegmentFINAL: %s\n", segment2);
+					send(new_socket, segment2, strlen(segment2);
 					segCont++;
 				}
 
